@@ -16,11 +16,14 @@ services:
     volumes:
       - ./public:/srv/html
 
-  docs:
-    build:
-      context: .
-      dockerfile: Dockerfile.docsify
+
+  docsify:
+    image: node:18-alpine
+    container_name: docsify
+    command: sh -c "npm install -g docsify-cli && docsify serve /docs -p 3000"
+    working_dir: /docs
+    volumes:
+      - ./docs:/docs
     ports:
       - "3000:3000"
-    volumes:
-      - ./docs:/srv/docs
+    restart: unless-stopped
