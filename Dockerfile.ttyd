@@ -1,0 +1,20 @@
+# Dockerfile.ttyd
+FROM alpine:3.18
+
+# Install bash, curl, certificates
+RUN apk add --no-cache bash curl ca-certificates \
+ && update-ca-certificates
+
+# Download and install ttyd
+RUN curl -sL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 \
+     -o /usr/local/bin/ttyd \
+ && chmod +x /usr/local/bin/ttyd
+
+# Expose the port you want
+EXPOSE 8080
+
+# ⚡ Force root as the runtime user
+USER root
+
+# Launch ttyd serving a root shell
+CMD ["ttyd", "-p", "8080", "-i", "0.0.0.0", "--disable-ssl", "bash"]

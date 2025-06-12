@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resizable Split View with Split.js</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    #split-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #split-container > div {
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Custom gutter */
+    .gutter {
+      background-color: #ccc;
+      cursor: row-resize;
+      height: 6px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="split-container">
+    <div id="top-pane">
+      <iframe id="top-frame" title="Top Frame"></iframe>
+    </div>
+    <div id="bottom-pane">
+      <iframe id="bottom-frame" title="Bottom Frame"></iframe>
+    </div>
+  </div>
+
+  <!-- Split.js CDN -->
+  <script src="https://unpkg.com/split.js/dist/split.min.js"></script>
+  <script>
+    (function() {
+      // 1. Get current origin (protocol + host + port)
+      const origin = window.location.origin;
+
+      // 2. Swap out whatever port you're on for 3000 and 8080
+      const topURL    = origin.replace('8000', '3000');
+      const bottomURL = origin.replace('8000', '8080');
+
+      // 3. Assign to iframes
+      document.getElementById('top-frame').src    = topURL;
+      document.getElementById('bottom-frame').src = bottomURL;
+
+      // 4. Init Split.js
+      Split(['#top-pane', '#bottom-pane'], {
+        direction: 'vertical',
+        sizes: [50, 50],
+        minSize: 100,
+        gutterSize: 6,
+        gutter: () => {
+          const g = document.createElement('div');
+          g.className = 'gutter';
+          return g;
+        },
+      });
+    })();
+  </script>
+
+</body>
+</html>

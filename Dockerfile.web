@@ -1,0 +1,9 @@
+FROM python:3-alpine
+
+# Copy the static HTML (and any other assets) into /srv/html
+WORKDIR /srv/html
+COPY public/ ./
+
+# Expose port & start simple server
+EXPOSE 8000
+CMD ["python3", "-m", "http.server", "8000", "--bind", "0.0.0.0"]
