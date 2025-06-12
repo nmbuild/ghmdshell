@@ -1,7 +1,25 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 
-RUN apt-get update && apt-get install -y curl && \
-    curl -sL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 -o /usr/local/bin/ttyd && \
+# Install curl and OpenJDK 21
+RUN apt-get update && \
+    apt-get install -y curl openjdk-21-jdk
+
+# Download and install ttyd
+RUN curl -sL https://github.com/tsl0922/ttyd/releases/download/1.7.7/ttyd.x86_64 -o /usr/local/bin/ttyd && \
     chmod +x /usr/local/bin/ttyd
 
-CMD [ "bash", "-c", "nohup ttyd -p 8080 -i 0.0.0.0 --disable-ssl -W bash > /tmp/ttyd.log 2>&1 & tail -f /dev/null" ]
+# Create a non-root user 'student'
+RUN useradd -ms /bin/bash student
+
+# Set ownership of the home directory (optional, for mounting files)
+RUN chown -R student:student /home/student
+
+# Switch to the non-root user
+USER student
+WORKDIR /home/student
+
+# Expose the ttyd port
+EXPOSE 8080
+
+# Run ttyd as the non-root user, serving bash shell
+CMD [ "ttyd", "-p", "8080", "-i", "0.0.0.0", "--disable-ssl", "-W", "bash" ]
